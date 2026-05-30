@@ -1,8 +1,71 @@
 <!--index.wxml-->
-<scroll-view class="scrollarea" scroll-y type="list">
-  <view class="container">
-    <view class="usermotto">
-      <text class="user-motto">{{motto}}</text>
+<view class="page-wrapper">
+  <view class="app-layout">
+    <view class="sidebar">
+      <text class="sidebar-title">🤖 AI 智能助手</text>
+      <view class="sidebar-controls">
+        <button
+          class="ingest-button"
+          bindtap="ingestKnowledge"
+          disabled="{{ingestLoading}}"
+        >
+          <text>{{ingestButtonText}}</text>
+          <view wx:if="{{ingestLoading}}" class="button-spinner"></view>
+        </button>
+        <picker
+          mode="selector"
+          range="{{documentOptions}}"
+          range-key="label"
+          value="{{documentIndex}}"
+          bindchange="onDocumentChange"
+        >
+          <view class="document-select">{{documentOptions[documentIndex].label}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="chat-container">
+      <scroll-view
+        class="chat-messages"
+        scroll-y
+        scroll-into-view="{{scrollIntoView}}"
+        scroll-with-animation
+        enhanced
+        show-scrollbar="{{false}}"
+      >
+        <view class="welcome-message">
+          <text class="welcome-title">欢迎使用 AI 对话</text>
+          <text class="welcome-desc">开始与我聊天吧！我可以回答你的各种问题。</text>
+        </view>
+
+        <block wx:for="{{messages}}" wx:key="id">
+          <view class="message {{item.isUser ? 'user' : 'ai'}}" id="msg-{{item.id}}">
+            <view class="message-content">
+              <text wx:if="{{item.isUser}}">{{item.content}}</text>
+              <rich-text wx:else nodes="{{item.content}}"></rich-text>
+            </view>
+          </view>
+        </block>
+
+        <view wx:if="{{loading}}" class="message ai" id="loading-msg">
+          <view class="message-content">
+            <view class="loading"></view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="chat-input-container">
+        <input
+          class="chat-input"
+          value="{{inputValue}}"
+          placeholder="输入你的问题..."
+          bindinput="onInputChange"
+          bindconfirm="sendMessage"
+          confirm-type="send"
+          disabled="{{sending}}"
+        />
+        <button class="send-button" bindtap="sendMessage" disabled="{{sending}}">发送</button>
+      </view>
     </view>
   </view>
-</scroll-view>
+</view>
