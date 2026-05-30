@@ -120,7 +120,6 @@ public class AppConfig {
 
     @Bean
     public EmbeddingStoreIngestor embeddingStoreIngestor(InMemoryEmbeddingStore<TextSegment> inMemoryEmbeddingStore,
-                                                         ChromaEmbeddingStore chromaEmbeddingStore,
                                                          EmbeddingModel embeddingModel) {
         // TokenCountEstimator：token用量估算器
         // recursive 方法实际上是一个高层封装，它将 DocumentByParagraphSplitter、DocumentByLineSplitter、DocumentBySentenceSplitter、DocumentByWordSplitter、DocumentByCharacterSplitter 串联成一个责任链，并自动配置好各自的 subSplitter。开发者无需手动构建分层结构，直接调用此方法即可获得最佳实践的分割器。
@@ -148,12 +147,10 @@ public class AppConfig {
 //            System.out.println(seg.text().length() + " : " + seg.text().substring(0, Math.min(20, seg.text().length())));
 //        }
 
-        EmbeddingStore<TextSegment> embeddingStore = withInMemoryEmbeddingStore ? inMemoryEmbeddingStore : chromaEmbeddingStore;
-
         return EmbeddingStoreIngestor.builder()
                 .documentSplitter(DocumentSplitters.recursive(500, 100))
                 .embeddingModel(embeddingModel)
-                .embeddingStore(embeddingStore)
+                .embeddingStore(inMemoryEmbeddingStore)
                 .build();
     }
 
@@ -167,7 +164,7 @@ public class AppConfig {
     // 激活虚拟环境（只在当前shell生效，不影响全局变量，下次使用还要在/chroma平级目录执行激活）：source chroma/bin/activate
     // 安装chroma（可能python3需要升级python3 -m pip install --upgrade pip）：pip install chromadb
     // 启动服务（只监听ipv6）：chroma run --path ./data --port 8000
-    @Bean
+    // @Bean
     public ChromaEmbeddingStore chromaEmbeddingStore() {
         // 默认使用 ChromaApiVersion.V2
         // TODO注意：Chroma服务启动默认只监听ipv6。所以123.0.0.1:8000访问不了。localhost:8000也访问不了因为Java组件中默认使用ipv4导致localhost解析成123.0.0.1。

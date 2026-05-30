@@ -46,14 +46,12 @@ import dev.langchain4j.model.scoring.ScoringModel;
 import dev.langchain4j.service.tool.DefaultToolExecutor;
 import dev.langchain4j.service.tool.ToolExecutor;
 import dev.langchain4j.store.embedding.*;
-import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
 import dev.langchain4j.store.embedding.filter.Filter;
 import dev.langchain4j.store.embedding.filter.MetadataFilterBuilder;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
@@ -65,8 +63,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import static dev.langchain4j.data.document.loader.FileSystemDocumentLoader.loadDocument;
-
 /**
  * @author <a href="mailto:chenxilzx1@gmail.com">theonefx</a>
  */
@@ -74,9 +70,6 @@ import static dev.langchain4j.data.document.loader.FileSystemDocumentLoader.load
 @Controller
 public class BasicController {
     private static Map<String, DocumentDto> savedDocuments = new HashMap<>();
-
-    @Value("${ai.rag.withInMemoryEmbeddingStore.switch:false}")
-    private boolean withInMemoryEmbeddingStore;
 
     @Resource
     private RpcProxy rpcProxy;
@@ -92,8 +85,6 @@ public class BasicController {
     private EmbeddingStoreIngestor embeddingStoreIngestor;
     @Resource
     private InMemoryEmbeddingStore<TextSegment> inMemoryEmbeddingStore;
-    @Resource
-    private ChromaEmbeddingStore chromaEmbeddingStore;
     @Resource
     private EmbeddingModel embeddingModel;
     @Resource
@@ -418,10 +409,6 @@ public class BasicController {
     @GetMapping("/ragIngest")
     @ResponseBody
     public Collection<DocumentDto> ragIngest() throws IOException {
-        // 查看数据
-        if (!withInMemoryEmbeddingStore) {
-            BasicController.savedDocuments = findDocuments();
-        }
         if (!CollectionUtils.isEmpty(savedDocuments)) {
             return savedDocuments.values();
         }
@@ -459,30 +446,26 @@ public class BasicController {
         embeddingStoreIngestor.ingest(txtDocument, pdfDocument, webDocument);
 
         // format
-        if (withInMemoryEmbeddingStore) {
-            String entriesJson = inMemoryEmbeddingStore.serializeToJson();
-            TextSegmentsDto textSegmentsDto = JacksonHelper.toObj(entriesJson, TextSegmentsDto.class, true);
-            if (null == textSegmentsDto || null == textSegmentsDto.getEntries()) {
-                return null;
+        String entriesJson = inMemoryEmbeddingStore.serializeToJson();
+        TextSegmentsDto textSegmentsDto = JacksonHelper.toObj(entriesJson, TextSegmentsDto.class, true);
+        if (null == textSegmentsDto || null == textSegmentsDto.getEntries()) {
+            return null;
+        }
+        for (TextSegmentDto textSegmentDto : textSegmentsDto.getEntries()) {
+            if (null == textSegmentDto || null == textSegmentDto.getEmbedded() ||
+                    null == textSegmentDto.getEmbedded().getMetadata() ||
+                    CollectionUtils.isEmpty(textSegmentDto.getEmbedded().getMetadata().getMetadata())) {
+                continue;
             }
-            for (TextSegmentDto textSegmentDto : textSegmentsDto.getEntries()) {
-                if (null == textSegmentDto || null == textSegmentDto.getEmbedded() ||
-                        null == textSegmentDto.getEmbedded().getMetadata() ||
-                        CollectionUtils.isEmpty(textSegmentDto.getEmbedded().getMetadata().getMetadata())) {
-                    continue;
-                }
 
-                Object value = textSegmentDto.getEmbedded().getMetadata().getMetadata().get("document_id");
-                String documentId = null == value ? "" : value.toString();
-                DocumentDto documentDto = savedDocuments.get(documentId);
-                if (null == documentDto) {
-                    continue;
-                }
-
-                documentDto.getTextSegments().add(textSegmentDto);
+            Object value = textSegmentDto.getEmbedded().getMetadata().getMetadata().get("document_id");
+            String documentId = null == value ? "" : value.toString();
+            DocumentDto documentDto = savedDocuments.get(documentId);
+            if (null == documentDto) {
+                continue;
             }
-        } else {
-            savedDocuments = findDocuments();
+
+            documentDto.getTextSegments().add(textSegmentDto);
         }
 
         return savedDocuments.values();
@@ -516,9 +499,8 @@ public class BasicController {
                 .filter(filter)
                 .build();
 
-        EmbeddingStore<TextSegment> embeddingStore = withInMemoryEmbeddingStore ? inMemoryEmbeddingStore : chromaEmbeddingStore;
         // 查询
-        EmbeddingSearchResult<TextSegment> embeddingSearchResult = embeddingStore.search(embeddingSearchRequest);
+        EmbeddingSearchResult<TextSegment> embeddingSearchResult = inMemoryEmbeddingStore.search(embeddingSearchRequest);
 
         // 评分
         List<Double> rerankScores = new ArrayList<>();
