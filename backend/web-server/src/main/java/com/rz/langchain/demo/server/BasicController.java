@@ -164,7 +164,7 @@ public class BasicController {
         }
         // Rag搜索结果
         if (!CollectionUtils.isEmpty(savedDocuments) && !StringUtils.isBlank(requestDto.getDocumentName())) {
-            List<EmbeddingMatchDto> embeddingMatchDtos = ragSearch(requestDto.getMessage(), true, "all", requestDto.getDocumentName());
+            List<EmbeddingMatchDto> embeddingMatchDtos = ragSearch(requestDto.getMessage(), requestDto.isReranked(), "all", requestDto.getDocumentName());
             if (!CollectionUtils.isEmpty(embeddingMatchDtos)) {
                 String ragText = "这是知识库查询结果的json数据：\n";
                 ragText += "========以下是json数据类型描述========\n";
@@ -498,7 +498,7 @@ public class BasicController {
     @GetMapping("/ragSearch")
     @ResponseBody
     public List<EmbeddingMatchDto> ragSearch(@RequestParam(value = "value", defaultValue = "介绍一下林曦") String value,
-                                             @RequestParam(value = "rerank", defaultValue = "true") boolean rerank,
+                                             @RequestParam(value = "reranked", defaultValue = "true") boolean reranked,
                                              @RequestParam(value = "type", defaultValue = "all") String type,
                                              @RequestParam(value = "name", defaultValue = "all") String name) {
         // 条件
@@ -525,7 +525,7 @@ public class BasicController {
 
         // 评分
         List<Double> rerankScores = new ArrayList<>();
-        if (rerank) {
+        if (reranked) {
             List<TextSegment> textSegments = new ArrayList<>();
             for (EmbeddingMatch<TextSegment> embeddingMatch : embeddingSearchResult.matches()) {
                 textSegments.add(null == embeddingMatch ? null : embeddingMatch.embedded());

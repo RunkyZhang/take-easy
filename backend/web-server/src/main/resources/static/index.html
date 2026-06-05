@@ -90,6 +90,31 @@
             color: white;
         }
 
+        .sidebar .row {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar .row .document-select {
+            flex: 1;
+        }
+
+        .sidebar .rerank-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: white;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .sidebar .rerank-checkbox input {
+            cursor: pointer;
+        }
+
         .chat-container {
             width: 85%;
             background: white;
@@ -394,10 +419,16 @@
                 <option value="openai">OpenAI 协议</option>
                 <option value="anthropic">Anthropic 协议</option>
             </select>
-            <select class="document-select" id="documentSelect">
-                <option value="">空</option>
-                <option value="all">all</option>
-            </select>
+            <div class="row">
+                <select class="document-select" id="documentSelect">
+                    <option value="">空</option>
+                    <option value="all">all</option>
+                </select>
+                <label class="rerank-checkbox">
+                    <input type="checkbox" id="rerankCheckbox">
+                    Rerank
+                </label>
+            </div>
         </div>
     </aside>
 
@@ -431,6 +462,7 @@
     const ingestSpinner = document.getElementById('ingestSpinner');
     const documentSelect = document.getElementById('documentSelect');
     const protocolSelect = document.getElementById('protocolSelect');
+    const rerankCheckbox = document.getElementById('rerankCheckbox');
 
     function handleKeyPress(event) {
         if (event.key === 'Enter') {
@@ -553,7 +585,8 @@
             const selectedProtocol = protocolSelect.value;
             const requestBody = {
                 message: message,
-                anthropicApiAdapter: selectedProtocol === 'anthropic'
+                anthropicApiAdapter: selectedProtocol === 'anthropic',
+                reranked: rerankCheckbox.checked
             };
 
             // 只有当选择了具体文档（非空）时才添加 documentName
