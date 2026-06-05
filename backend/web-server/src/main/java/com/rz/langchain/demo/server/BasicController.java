@@ -49,7 +49,10 @@ import dev.langchain4j.model.output.Response;
 import dev.langchain4j.model.scoring.ScoringModel;
 import dev.langchain4j.service.tool.DefaultToolExecutor;
 import dev.langchain4j.service.tool.ToolExecutor;
-import dev.langchain4j.store.embedding.*;
+import dev.langchain4j.store.embedding.EmbeddingMatch;
+import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
+import dev.langchain4j.store.embedding.EmbeddingSearchResult;
+import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.filter.Filter;
 import dev.langchain4j.store.embedding.filter.MetadataFilterBuilder;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
@@ -64,6 +67,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -427,7 +432,11 @@ public class BasicController {
 
         // 最远的距离
         org.springframework.core.io.Resource resource = resourceLoader.getResource("classpath:The_farthest_distance.txt");
-        Document txtDocument = FileSystemDocumentLoader.loadDocument(resource.getFile().toPath(), new TextDocumentParser());
+        String txtContent;
+        try (InputStream inputStream = resource.getInputStream()) {
+            txtContent = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        }
+        Document txtDocument = Document.from(txtContent);
         txtDocument.metadata().put("document_id", UUID.randomUUID().toString());
         txtDocument.metadata().put("type", "小说");
         txtDocument.metadata().put("name", "最远的距离");
