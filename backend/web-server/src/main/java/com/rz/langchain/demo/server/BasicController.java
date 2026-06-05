@@ -86,7 +86,7 @@ public class BasicController {
 
     @Resource
     private RpcProxy rpcProxy;
-    @Resource(name = "opencode_go_glm_5.1")
+    @Resource(name = "volcengine_doubao_seed_2.0_pro")
     private OpenAiChatModel openAiChatModel;
     @Resource(name = "opencode_go_qwen3.7_max")
     private AnthropicChatModel anthropicChatModel;

@@ -13,7 +13,6 @@ import dev.langchain4j.model.embedding.onnx.bgesmallzhv15q.BgeSmallZhV15Quantize
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.model.scoring.ScoringModel;
-import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.chroma.ChromaApiVersion;
 import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
@@ -33,6 +32,8 @@ public class AppConfig {
     public String deepseekApiKey;
     @Value("${ai.model.opencode.go.apiKey}")
     public String openCodeApiKey;
+    @Value("${ai.model.volcengine.codeplan.apiKey}")
+    public String volcengineApiKey;
     @Value("${ai.rag.withInMemoryEmbeddingStore.switch:false}")
     private boolean withInMemoryEmbeddingStore;
 
@@ -119,6 +120,23 @@ public class AppConfig {
                 .baseUrl("https://opencode.ai/zen/go/v1")
                 .apiKey(openCodeApiKey)
                 .modelName("glm-5.1")
+                .returnThinking(true)
+                .timeout(Duration.ofSeconds(300))
+                .supportedCapabilities(Capability.RESPONSE_FORMAT_JSON_SCHEMA)
+                .strictJsonSchema(true)
+                .logRequests(true)
+                .logResponses(true)
+                .build();
+    }
+
+    // 兼容 Anthropic 接口协议工具：https://ark.cn-beijing.volces.com/api/coding
+    // 兼容 OpenAI 接口协议工具：https://ark.cn-beijing.volces.com/api/coding/v3
+    @Bean("volcengine_doubao_seed_2.0_pro")
+    public OpenAiChatModel openAiChatModel_volcengine_doubao_seed_2_0_pro() {
+        return OpenAiChatModel.builder()
+                .baseUrl("https://ark.cn-beijing.volces.com/api/coding/v3")
+                .apiKey(volcengineApiKey)
+                .modelName("doubao-seed-2.0-pro")
                 .returnThinking(true)
                 .timeout(Duration.ofSeconds(300))
                 .supportedCapabilities(Capability.RESPONSE_FORMAT_JSON_SCHEMA)
