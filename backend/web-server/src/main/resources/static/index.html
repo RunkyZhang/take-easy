@@ -390,6 +390,10 @@
                 <span id="ingestButtonText">📚 知识库Ingest</span>
                 <span id="ingestSpinner" class="button-spinner" style="display: none;"></span>
             </button>
+            <select class="document-select" id="protocolSelect">
+                <option value="openai">OpenAI 协议</option>
+                <option value="anthropic">Anthropic 协议</option>
+            </select>
             <select class="document-select" id="documentSelect">
                 <option value="">空</option>
                 <option value="all">all</option>
@@ -426,6 +430,7 @@
     const ingestButtonText = document.getElementById('ingestButtonText');
     const ingestSpinner = document.getElementById('ingestSpinner');
     const documentSelect = document.getElementById('documentSelect');
+    const protocolSelect = document.getElementById('protocolSelect');
 
     function handleKeyPress(event) {
         if (event.key === 'Enter') {
@@ -443,29 +448,29 @@
             const response = await fetch('/ragIngest', {
                 method: 'GET'
             });
-            
+
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            
+
             // ragIngest 接口返回的是 DocumentDto 数组
             const data = await response.json();
             const count = Array.isArray(data) ? data.length : 0;
-            
+
             // 更新按钮文本显示数量
             ingestButtonText.textContent = `📚 知识库${count}`;
-            
+
             // 更新下拉列表
             updateDocumentSelect(data);
-            
+
             // 在聊天区域显示成功消息
             addMessage(`✅ 知识库导入完成！共导入 ${count} 个Document。`, false);
-            
+
         } catch (error) {
             console.error('Error:', error);
             ingestButtonText.textContent = '❌ Ingest失败';
             addMessage('❌ 知识库导入失败，请稍后重试。', false);
-            
+
             // 3秒后恢复原始文本
             setTimeout(() => {
                 ingestButtonText.textContent = '📚 知识库Ingest';
@@ -480,7 +485,7 @@
     function updateDocumentSelect(documents) {
         // 清空现有选项（保留"空"和"all"）
         documentSelect.innerHTML = '<option value="">空</option><option value="all">all</option>';
-        
+
         // 添加文档选项
         if (Array.isArray(documents)) {
             documents.forEach(doc => {
@@ -545,15 +550,17 @@
 
         try {
             const selectedDocument = documentSelect.value;
+            const selectedProtocol = protocolSelect.value;
             const requestBody = {
-                message: message
+                message: message,
+                anthropicApiAdapter: selectedProtocol === 'anthropic'
             };
-            
+
             // 只有当选择了具体文档（非空）时才添加 documentName
             if (selectedDocument) {
                 requestBody.documentName = selectedDocument;
             }
-            
+
             const response = await fetch('/chat', {
                 method: 'POST',
                 headers: {
