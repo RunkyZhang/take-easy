@@ -10,4 +10,5 @@ public class ChatMessagesDto implements Serializable {
     private String message;
     private List<String> imageBase64s;
     private String documentName;
+    private boolean anthropicApiAdapter = false;
 }

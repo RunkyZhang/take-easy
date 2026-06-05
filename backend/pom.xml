@@ -54,6 +54,20 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- langchain4j rag chroma store -->
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-chroma</artifactId>
+                <version>1.13.0-beta23</version>
+            </dependency>
+
+            <!-- hanlp分词NLP -->
+            <dependency>
+                <groupId>com.hankcs</groupId>
+                <artifactId>hanlp</artifactId>
+                <version>portable-1.8.6</version>
+            </dependency>
+
             <!-- feign-httpclient：替换feign原http调用工具，为了优化连接池，通过配置替换 -->
             <dependency>
                 <groupId>io.github.openfeign</groupId>

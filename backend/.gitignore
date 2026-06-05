@@ -1,20 +1,49 @@
-.DS_Store
-.idea
-.classpath
-.project
-*.iml
-/pkg/
-/target/
-/.settings/
-/logs/
-/log/
+# maven ignore
+target/
+*.jar
+!.mvn/wrapper/*
+*.war
+*.zip
+*.tar
+*.tar.gz
 
-*/.DS_Store
-*/.idea
-*/.classpath
-*/.project
-*/*.iml
-*/target/
-*/.settings/
-*/logs/
-*/log/
+# eclipse ignore
+.settings/
+.externalToolBuilders/
+.project
+.classpath
+
+# idea ignore
+.idea/
+*.ipr
+*.iml
+*.iws
+
+# temp ignore
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp
+*.springBeans
+.*.bat
+
+**/bin/**
+
+# system ignore
+.DS_Store
+Thumbs.db
+
+**/**/.factorypath
+*.versionsBackup
+LOG_PATH_IS_UNDEFINED/
+log/
+
+# vscode ignore
+.vscode/
+
+# cursor ignore
+.cursor/
+
+# claude ignore
+.claude/

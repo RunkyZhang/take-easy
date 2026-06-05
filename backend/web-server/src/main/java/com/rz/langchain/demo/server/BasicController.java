@@ -16,6 +16,8 @@
 
 package com.rz.langchain.demo.server;
 
+import com.hankcs.hanlp.seg.common.Term;
+import com.hankcs.hanlp.tokenizer.StandardTokenizer;
 import com.rz.langchain.demo.server.dto.*;
 import com.rz.langchain.demo.server.mapper.EmbeddingMetadataMapper;
 import com.rz.langchain.demo.server.rpc.RpcProxy;
@@ -34,6 +36,8 @@ import dev.langchain4j.data.message.*;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.internal.Utils;
 import dev.langchain4j.memory.ChatMemory;
+import dev.langchain4j.model.anthropic.AnthropicChatModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
@@ -52,6 +56,7 @@ import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
@@ -71,10 +76,15 @@ import java.util.stream.Collectors;
 public class BasicController {
     private static Map<String, DocumentDto> savedDocuments = new HashMap<>();
 
+    @Value("${ai.rag.withInMemoryEmbeddingStore.switch:false}")
+    private boolean withInMemoryEmbeddingStore;
+
     @Resource
     private RpcProxy rpcProxy;
-    @Resource(name = "qwen_3_5_plus")
+    @Resource(name = "opencode_go_glm_5.1")
     private OpenAiChatModel openAiChatModel;
+    @Resource(name = "opencode_go_qwen3.7_max")
+    private AnthropicChatModel anthropicChatModel;
     @Resource
     private StreamingChatModel streamingChatModel;
     @Resource
@@ -130,6 +140,8 @@ public class BasicController {
         Assert.notNull(requestDto, "Assert.notNull: requestDto");
         Assert.hasText(requestDto.getMessage(), "Assert.hasText: requestDto.getMessage()");
 
+        ChatModel chatModel = requestDto.isAnthropicApiAdapter() ? anthropicChatModel : openAiChatModel;
+
         // 获取历史会话
         List<ChatMessage> chatMessages = chatMemory.messages();
         chatMessages.addAll(chatMemory.messages());
@@ -175,7 +187,7 @@ public class BasicController {
                     .messages(chatMessages)
                     .toolSpecifications(toolsSelector.getToolSpecifications())
                     .build();
-            ChatResponse chatResponse = openAiChatModel.chat(chatRequest);
+            ChatResponse chatResponse = chatModel.chat(chatRequest);
             AiMessage aiMessage = chatResponse.aiMessage();
             chatMessages.add(aiMessage);
             // 存储
@@ -558,6 +570,22 @@ public class BasicController {
         }
 
         return embeddingMatchDtos;
+    }
+
+    // 词性标注
+    // https://hanlp.hankcs.com/demos/pos.html
+    @GetMapping("/nlp")
+    @ResponseBody
+    public List<String> ragSearch(@RequestParam(value = "value", defaultValue = "马云在杭州阿里巴巴总部发表了《杭州环保互联网化》的演讲。") String value) {
+        List<String> result = new ArrayList<>();
+        // 词性可以在com.hankcs.hanlp.corpus.tag.Nature注释中查看文定义
+        // 频次是该词在com.hankcs.hanlp.HanLP.Config总定义的文件中出现的次数
+        List<Term> termList = StandardTokenizer.segment(value);
+        for (Term term : termList) {
+            result.add(String.format("【%s】, 词性：%s，频次：%d", term.word, term.nature, term.getFrequency()));
+        }
+
+        return result;
     }
 
     // http://127.0.0.1:8080/html

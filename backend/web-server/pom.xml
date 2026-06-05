@@ -33,11 +33,19 @@
         <!-- langchain4j -->
         <dependency>
             <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j-open-ai</artifactId>
+            <artifactId>langchain4j</artifactId>
         </dependency>
+
+        <!-- langchain4j openai协议实现 -->
         <dependency>
             <groupId>dev.langchain4j</groupId>
-            <artifactId>langchain4j</artifactId>
+            <artifactId>langchain4j-open-ai</artifactId>
+        </dependency>
+
+        <!-- langchain4j anthropic协议实现 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-anthropic</artifactId>
         </dependency>
 
         <!-- langchain4j document parser -->
@@ -76,7 +84,12 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-chroma</artifactId>
-            <version>1.13.0-beta23</version>
+        </dependency>
+
+        <!-- hanlp分词NLP -->
+        <dependency>
+            <groupId>com.hankcs</groupId>
+            <artifactId>hanlp</artifactId>
         </dependency>
 
         <!-- MyBatis Spring Boot Starter -->
