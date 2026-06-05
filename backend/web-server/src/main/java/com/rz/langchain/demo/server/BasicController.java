@@ -434,7 +434,7 @@ public class BasicController {
         savedDocuments.put(txtDocument.metadata().getString("document_id"), toDocumentDto(txtDocument));
 
         // 短篇小说写作指南
-        Document pdfDocument = FileSystemDocumentLoader.loadDocument("/Users/00545579/Downloads/短篇小说写作指南.pdf", new ApachePdfBoxDocumentParser());
+        Document pdfDocument = FileSystemDocumentLoader.loadDocument("/tmp/短篇小说写作指南.pdf", new ApachePdfBoxDocumentParser());
         pdfDocument.metadata().put("document_id", UUID.randomUUID().toString());
         pdfDocument.metadata().put("type", "技能");
         pdfDocument.metadata().put("name", "短篇小说写作指南");

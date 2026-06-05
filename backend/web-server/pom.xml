@@ -116,4 +116,25 @@
             <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
     </dependencies>
+
+    <!-- 打包执行：指定main函数；把依赖包打包到一个jar中 -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <configuration>
+                    <mainClass>com.rz.langchain.demo.server.ServerApp</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
