@@ -1,0 +1,22 @@
+**/.DS_Store
+**/.idea
+**/.classpath
+**/.project
+**/*.iml
+**/target/
+**/logs/
+**/log/
+
+**/.settings/
+
+# idea ignore
+**/.idea
+
+# vscode ignore
+**/.vscode/
+
+# cursor ignore
+**/.cursor/
+
+# claude ignore
+**/.claude/
