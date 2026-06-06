@@ -1,29 +1,29 @@
 <!--pages/scan/scan.wxml-->
-<view className="scan-page">
-  <camera device-position="back" flash="off" binderror="error" className="wechat-camera">
-    <view className="focus-bracket">
-      <view className="bracket-item tl"></view>
-      <view className="bracket-item tr"></view>
-      <view className="bracket-item bl"></view>
-      <view className="bracket-item br"></view>
-      <view className="scanning-beam" wx:if="{{isScanning}}"></view>
+<view class="scan-page">
+  <camera device-position="back" flash="off" binderror="error" class="wechat-camera">
+    <view class="focus-bracket">
+      <view class="bracket-item tl"></view>
+      <view class="bracket-item tr"></view>
+      <view class="bracket-item bl"></view>
+      <view class="bracket-item br"></view>
+      <view class="scanning-beam" wx:if="{{isScanning}}"></view>
     </view>
   </camera>
 
-  <view className="camera-dock">
-    <view className="switch-scenarios-tip">切换模拟做题卡：</view>
-    <scroll-view scroll-x className="sample-list" enable-flex>
-      <view className="sample-item" bindtap="selectSample">三位数除法</view>
-      <view className="sample-item" bindtap="selectSample">一元二次方程</view>
-      <view className="sample-item" bindtap="selectSample">阿基米德浮力</view>
+  <view class="camera-dock">
+    <view class="switch-scenarios-tip">切换模拟做题卡：</view>
+    <scroll-view scroll-x class="sample-list" enable-flex>
+      <view class="sample-item" bindtap="selectSample">三位数除法</view>
+      <view class="sample-item" bindtap="selectSample">一元二次方程</view>
+      <view class="sample-item" bindtap="selectSample">阿基米德浮力</view>
     </scroll-view>
 
-    <view className="controls-row">
-      <view className="btn-icon">📁 相册</view>
-      <view className="shutter-outer" bindtap="startScan">
-        <view className="shutter-inner"></view>
+    <view class="controls-row">
+      <view class="btn-icon">📁 相册</view>
+      <view class="shutter-outer" bindtap="startScan">
+        <view class="shutter-inner"></view>
       </view>
-      <view className="btn-icon">整页 📖</view>
+      <view class="btn-icon">整页 📖</view>
     </view>
   </view>
 </view>

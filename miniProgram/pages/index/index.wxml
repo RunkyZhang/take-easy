@@ -1,45 +1,45 @@
 <!--pages/index/index.wxml-->
-<view className="container index-page">
+<view class="container index-page">
   <!-- 欢迎栏 -->
-  <view className="welcome-section">
-    <view className="welcome-info">
-      <text className="user-name">你好，子涵家长 👋</text>
-      <text className="sub-title">今天又是充满进步的一天！</text>
+  <view class="welcome-section">
+    <view class="welcome-info">
+      <text class="user-name">你好，子涵家长 👋</text>
+      <text class="sub-title">今天又是充满进步的一天！</text>
     </view>
-    <image className="user-avatar" src="{{profileAvatar}}" mode="aspectFill"></image>
+    <image class="user-avatar" src="{{profileAvatar}}" mode="aspectFill"></image>
   </view>
 
   <!-- 拍搜卡片 -->
-  <view className="scan-banner" bindtap="goToScan">
-    <view className="banner-content">
-      <view className="banner-badge">
-        <text className="badge-text">✨ AI 智能拍搜</text>
+  <view class="scan-banner" bindtap="goToScan">
+    <view class="banner-content">
+      <view class="banner-badge">
+        <text class="badge-text">✨ AI 智能拍搜</text>
       </view>
-      <text className="banner-title">AI 智能拍照搜题</text>
-      <text className="banner-desc">秒级识别手写错题，提供多维度解析、知识点剖析</text>
+      <text class="banner-title">AI 智能拍照搜题</text>
+      <text class="banner-desc">秒级识别手写错题，提供多维度解析、知识点剖析</text>
     </view>
-    <button className="scan-btn">
+    <button class="scan-btn">
       <text>立即开始扫描</text>
     </button>
   </view>
 
   <!-- 今日学习目标 -->
-  <view className="section-header">
-    <text className="section-title">今日学习目标</text>
-    <text className="section-link" bindtap="goToReport">查看报告 ></text>
+  <view class="section-header">
+    <text class="section-title">今日学习目标</text>
+    <text class="section-link" bindtap="goToReport">查看报告 ></text>
   </view>
   
-  <view className="goals-list">
+  <view class="goals-list">
     <block wx:for="{{goals}}" wx:key="id">
-      <view className="goal-card" bindtap="onGoalClick" data-id="{{item.id}}">
-        <view className="goal-icon-box">🧠</view>
-        <view className="goal-info">
-          <view className="goal-row">
-            <text className="goal-title">{{item.title}}</text>
-            <text className="goal-progress-num">{{item.currentMinutes}}/{{item.targetMinutes}} 分钟</text>
+      <view class="goal-card" bindtap="onGoalClick" data-id="{{item.id}}">
+        <view class="goal-icon-box">🧠</view>
+        <view class="goal-info">
+          <view class="goal-row">
+            <text class="goal-title">{{item.title}}</text>
+            <text class="goal-progress-num">{{item.currentMinutes}}/{{item.targetMinutes}} 分钟</text>
           </view>
-          <view className="progress-bar-bg">
-            <view className="progress-bar-fill" style="width: {{item.currentMinutes / item.targetMinutes * 100}}%"></view>
+          <view class="progress-bar-bg">
+            <view class="progress-bar-fill" style="width: {{item.currentMinutes / item.targetMinutes * 100}}%"></view>
           </view>
         </view>
       </view>
@@ -47,24 +47,24 @@
   </view>
 
   <!-- 周历视图 -->
-  <view className="section-header">
-    <text className="section-title">本周进步</text>
+  <view class="section-header">
+    <text class="section-title">本周进步</text>
   </view>
   
-  <view className="card chart-card">
-    <view className="chart-bar-container">
+  <view class="card chart-card">
+    <view class="chart-bar-container">
       <block wx:for="{{weeklyStats}}" wx:key="day">
-        <view className="chart-col">
-          <view className="bar-wrapper">
-            <view className="chart-bar {{item.active ? 'active' : ''}}" style="height: {{item.value}}%"></view>
+        <view class="chart-col">
+          <view class="bar-wrapper">
+            <view class="chart-bar {{item.active ? 'active' : ''}}" style="height: {{item.value}}%"></view>
           </view>
-          <text className="chart-label {{item.active ? 'active' : ''}}">{{item.day}}</text>
+          <text class="chart-label {{item.active ? 'active' : ''}}">{{item.day}}</text>
         </view>
       </block>
     </view>
-    <view className="insight-box">
-      <text className="insight-title font-bold text-[#10b981]">📈 本周学习效率提升 12%</text>
-      <text className="insight-desc">子涵在数学几何方面的掌握度明显提高，继续加油！</text>
+    <view class="insight-box">
+      <text class="insight-title font-bold text-[#10b981]">📈 本周学习效率提升 12%</text>
+      <text class="insight-desc">子涵在数学几何方面的掌握度明显提高，继续加油！</text>
     </view>
   </view>
 </view>
